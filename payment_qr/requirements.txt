@@ -1,0 +1,7 @@
+# Dependencias de Python para el módulo Payment QR
+
+# Librería para generar códigos QR
+qrcode[pil]>=7.3.1
+
+# Librería para procesamiento de imágenes (requerida por qrcode)
+Pillow>=9.0.0

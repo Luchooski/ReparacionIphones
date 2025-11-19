@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Secuencia para transacciones QR -->
+        <record id="seq_payment_qr_transaction" model="ir.sequence">
+            <field name="name">Transacciones QR</field>
+            <field name="code">payment.qr.transaction</field>
+            <field name="prefix">QR-</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>
