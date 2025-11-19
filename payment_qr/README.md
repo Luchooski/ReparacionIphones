@@ -1,29 +1,49 @@
-# Payment QR - Módulo de Pago con Código QR para Odoo
+# Payment QR - Módulo de Pago con Código QR para Odoo 17
 
 ## 📋 Descripción
 
-Módulo para Odoo que permite realizar pagos mediante código QR en el Punto de Venta (POS). El módulo genera códigos QR dinámicos con el monto exacto de la venta y recibe confirmaciones automáticas mediante webhook cuando el pago es completado.
+Módulo para **Odoo 17 Community** que permite realizar pagos mediante código QR en el Punto de Venta (POS). El módulo genera códigos QR dinámicos con el monto exacto de la venta y recibe confirmaciones automáticas mediante webhook cuando el pago es completado.
+
+**Optimizado para MercadoPago** con soporte completo para América Latina (Argentina, Brasil, Chile, Colombia, México, Perú, Uruguay).
 
 ## ✨ Características
 
 - ✅ Generación dinámica de códigos QR con el monto de la venta
-- ✅ Integración con múltiples proveedores de pago (MercadoPago, PayPal, Stripe, Yappy, personalizado)
+- ✅ **Integración completa con MercadoPago** (Checkout Pro API)
+- ✅ Soporte para múltiples proveedores (PayPal, Stripe, Yappy, personalizado)
 - ✅ Webhook para confirmación automática de pagos
 - ✅ Verificación de estado de pago en tiempo real mediante polling
 - ✅ Impresión automática de recibo tras confirmación
-- ✅ Interfaz amigable en el POS
+- ✅ Interfaz amigable en el POS con visualización del QR
 - ✅ Registro completo de transacciones
 - ✅ Soporte para ambientes de prueba y producción
+- ✅ Compatible con **Odoo 17 Community**
 
 ## 📦 Requisitos
 
-- Odoo 16.0 o superior
+- **Odoo 17.0 Community**
 - Python 3.8 o superior
+- Cuenta de MercadoPago (para usar la integración principal)
+- Servidor accesible desde internet (para recibir webhooks)
 - Dependencias de Python:
   - `qrcode[pil]>=7.3.1`
   - `Pillow>=9.0.0`
+  - `requests>=2.28.0`
 
-## 🚀 Instalación
+## 🚀 Guía rápida de instalación con MercadoPago
+
+**📖 Para una guía completa paso a paso con MercadoPago, ver: [CONFIGURACION_MERCADOPAGO.md](CONFIGURACION_MERCADOPAGO.md)**
+
+### Resumen rápido
+
+1. Instalar dependencias: `pip install -r payment_qr/requirements.txt`
+2. Instalar el módulo en Odoo desde Aplicaciones
+3. Obtener tu Access Token de [MercadoPago Developers](https://www.mercadopago.com.ar/developers/panel)
+4. Configurar método de pago en Odoo (Punto de Venta > Métodos de Pago)
+5. Configurar webhook en MercadoPago con la URL generada
+6. ¡Listo para usar!
+
+## 🚀 Instalación detallada
 
 ### 1. Instalar el módulo
 

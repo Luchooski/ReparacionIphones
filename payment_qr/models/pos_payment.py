@@ -37,6 +37,11 @@ class PosPayment(models.Model):
         help='Referencia única del pago QR'
     )
 
+    qr_preference_id = fields.Char(
+        string='Preference ID',
+        help='ID de preferencia de MercadoPago (o equivalente del proveedor)'
+    )
+
     def generate_qr_payment(self):
         """Genera el código QR para el pago"""
         self.ensure_one()
@@ -58,6 +63,7 @@ class PosPayment(models.Model):
         if qr_info:
             self.qr_image_data = qr_info.get('qr_image', '')
             self.qr_payment_url = qr_info.get('payment_url', '')
+            self.qr_preference_id = qr_info.get('preference_id', '')
             self.qr_payment_status = 'pending'
 
             _logger.info(f"QR payment generated for order {self.pos_order_id.name}: {reference}")

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from datetime import timedelta
 
 
 class PosPaymentMethod(models.Model):
@@ -53,12 +54,16 @@ class PosPaymentMethod(models.Model):
         help='Imprimir recibo automáticamente tras confirmar el pago'
     )
 
-    @api.depends('company_id')
+    @api.depends('company_id', 'qr_provider')
     def _compute_webhook_url(self):
         """Compute the webhook URL for payment confirmations"""
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         for record in self:
-            record.qr_webhook_url = f"{base_url}/payment_qr/webhook/{record.id}"
+            # Usar endpoint específico para MercadoPago
+            if record.qr_provider == 'mercadopago':
+                record.qr_webhook_url = f"{base_url}/payment_qr/webhook/{record.id}/mercadopago"
+            else:
+                record.qr_webhook_url = f"{base_url}/payment_qr/webhook/{record.id}"
 
     def _get_payment_qr_info(self, amount, currency, reference):
         """
@@ -87,32 +92,110 @@ class PosPaymentMethod(models.Model):
             return self._get_custom_qr(amount, currency, reference)
 
     def _get_mercadopago_qr(self, amount, currency, reference):
-        """Implementación para MercadoPago"""
-        # TODO: Implementar integración con MercadoPago
+        """
+        Implementación para MercadoPago usando Checkout Pro API
+        Genera un QR dinámico para pagos en punto de venta
+        """
+        import requests
         import qrcode
         from io import BytesIO
         import base64
+        import logging
 
-        # URL de pago de MercadoPago (ejemplo)
-        payment_url = f"https://www.mercadopago.com/checkout/v1/payment?amount={amount}&reference={reference}"
+        _logger = logging.getLogger(__name__)
 
-        # Generar QR
-        qr = qrcode.QRCode(version=1, box_size=10, border=5)
-        qr.add_data(payment_url)
-        qr.make(fit=True)
+        try:
+            # URL de la API según el ambiente
+            if self.qr_environment == 'production':
+                api_url = "https://api.mercadopago.com/checkout/preferences"
+            else:
+                api_url = "https://api.mercadopago.com/checkout/preferences"
 
-        img = qr.make_image(fill_color="black", back_color="white")
-        buffer = BytesIO()
-        img.save(buffer, format='PNG')
-        qr_image = base64.b64encode(buffer.getvalue()).decode()
+            # Preparar headers con el Access Token
+            headers = {
+                'Authorization': f'Bearer {self.qr_api_key}',
+                'Content-Type': 'application/json'
+            }
 
-        return {
-            'qr_image': qr_image,
-            'payment_url': payment_url,
-            'reference': reference,
-            'amount': amount,
-            'currency': currency.name,
-        }
+            # Obtener información de la empresa para el pagador
+            company = self.env.company
+
+            # Preparar datos de la preferencia de pago
+            preference_data = {
+                "items": [
+                    {
+                        "title": f"Venta POS - {company.name}",
+                        "description": f"Referencia: {reference}",
+                        "quantity": 1,
+                        "currency_id": currency.name if currency.name in ['ARS', 'BRL', 'CLP', 'MXN', 'COP', 'PEN', 'UYU'] else 'USD',
+                        "unit_price": float(amount)
+                    }
+                ],
+                "external_reference": reference,
+                "notification_url": self.qr_webhook_url,
+                "auto_return": "approved",
+                "back_urls": {
+                    "success": f"{self.qr_webhook_url}/success",
+                    "failure": f"{self.qr_webhook_url}/failure",
+                    "pending": f"{self.qr_webhook_url}/pending"
+                },
+                "statement_descriptor": company.name[:13] if company.name else "Venta POS",
+                "expires": True,
+                "expiration_date_from": fields.Datetime.now().isoformat(),
+                "expiration_date_to": (fields.Datetime.now() + timedelta(seconds=self.qr_timeout)).isoformat(),
+            }
+
+            # Realizar petición a MercadoPago
+            response = requests.post(api_url, json=preference_data, headers=headers, timeout=10)
+
+            if response.status_code != 201:
+                _logger.error(f"Error al crear preferencia MercadoPago: {response.text}")
+                return self._get_generic_qr(amount, currency, reference, 'mercadopago')
+
+            preference = response.json()
+
+            # Obtener URL de pago (init_point para producción o sandbox)
+            payment_url = preference.get('init_point') if self.qr_environment == 'production' else preference.get('sandbox_init_point', preference.get('init_point'))
+
+            if not payment_url:
+                _logger.error("No se pudo obtener URL de pago de MercadoPago")
+                return self._get_generic_qr(amount, currency, reference, 'mercadopago')
+
+            # Generar código QR con la URL de pago
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(payment_url)
+            qr.make(fit=True)
+
+            # Crear imagen del QR
+            img = qr.make_image(fill_color="black", back_color="white")
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            qr_image = base64.b64encode(buffer.getvalue()).decode()
+
+            _logger.info(f"QR MercadoPago generado exitosamente. Preference ID: {preference.get('id')}")
+
+            return {
+                'qr_image': qr_image,
+                'payment_url': payment_url,
+                'preference_id': preference.get('id'),
+                'reference': reference,
+                'amount': amount,
+                'currency': currency.name,
+            }
+
+        except requests.exceptions.RequestException as e:
+            _logger.error(f"Error de conexión con MercadoPago: {str(e)}")
+            # Fallback a QR genérico en caso de error
+            return self._get_generic_qr(amount, currency, reference, 'mercadopago')
+
+        except Exception as e:
+            _logger.error(f"Error inesperado al generar QR MercadoPago: {str(e)}")
+            return self._get_generic_qr(amount, currency, reference, 'mercadopago')
 
     def _get_paypal_qr(self, amount, currency, reference):
         """Implementación para PayPal"""
