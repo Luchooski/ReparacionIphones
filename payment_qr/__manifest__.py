@@ -33,9 +33,9 @@
         'payment',
     ],
     'data': [
-        'security/ir.model.access.csv',
-        'views/pos_payment_method_views.xml',
         'data/pos_payment_method_data.xml',
+        'views/pos_payment_method_views.xml',
+        'security/payment_qr_security.xml',
     ],
     'assets': {
         'point_of_sale.assets': [

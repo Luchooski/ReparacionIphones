@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Reglas de acceso para payment.qr.transaction -->
+
+        <!-- Acceso para usuarios POS -->
+        <record id="access_payment_qr_transaction_user" model="ir.model.access">
+            <field name="name">payment.qr.transaction.user</field>
+            <field name="model_id" ref="model_payment_qr_transaction"/>
+            <field name="group_id" ref="point_of_sale.group_pos_user"/>
+            <field name="perm_read">1</field>
+            <field name="perm_write">1</field>
+            <field name="perm_create">1</field>
+            <field name="perm_unlink">0</field>
+        </record>
+
+        <!-- Acceso para managers POS -->
+        <record id="access_payment_qr_transaction_manager" model="ir.model.access">
+            <field name="name">payment.qr.transaction.manager</field>
+            <field name="model_id" ref="model_payment_qr_transaction"/>
+            <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+            <field name="perm_read">1</field>
+            <field name="perm_write">1</field>
+            <field name="perm_create">1</field>
+            <field name="perm_unlink">1</field>
+        </record>
+
+        <!-- Acceso público (para webhooks) -->
+        <record id="access_payment_qr_transaction_public" model="ir.model.access">
+            <field name="name">payment.qr.transaction.public</field>
+            <field name="model_id" ref="model_payment_qr_transaction"/>
+            <field name="perm_read">1</field>
+            <field name="perm_write">0</field>
+            <field name="perm_create">0</field>
+            <field name="perm_unlink">0</field>
+        </record>
+
+    </data>
+</odoo>
