@@ -1,0 +1,17 @@
+# Dependencias de Python para módulo Payment QR con MercadoPago
+#
+# Este archivo es para hosting tipo Odoo.sh
+# Si lo colocas en la raíz de tu repositorio, Odoo.sh instalará
+# estas dependencias automáticamente
+#
+# Para otros hostings, instala manualmente:
+# pip install -r requirements.txt
+
+# Generación de códigos QR
+qrcode[pil]>=7.3.1
+
+# Procesamiento de imágenes (requerido por qrcode)
+Pillow>=9.0.0
+
+# Peticiones HTTP para APIs (MercadoPago)
+requests>=2.28.0
