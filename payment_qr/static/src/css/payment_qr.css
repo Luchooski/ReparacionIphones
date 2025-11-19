@@ -1,0 +1,179 @@
+/* Payment QR Styles */
+
+.payment-qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    min-height: 400px;
+}
+
+.qr-payment-display {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.qr-header h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.qr-code-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.qr-code-image {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    border: 4px solid #007bff;
+    border-radius: 8px;
+    padding: 10px;
+    background: white;
+}
+
+.qr-info {
+    margin: 20px 0;
+    padding: 15px;
+    background: #e9ecef;
+    border-radius: 8px;
+}
+
+.qr-amount,
+.qr-reference {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.qr-amount:last-child,
+.qr-reference:last-child {
+    border-bottom: none;
+}
+
+.qr-info .label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+}
+
+.qr-info .value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.qr-status {
+    margin: 20px 0;
+    padding: 15px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.qr-status .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #ffc107;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.qr-status .status-text {
+    font-size: 14px;
+    color: #856404;
+    font-weight: 500;
+}
+
+.qr-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.qr-actions button {
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.qr-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+.qr-actions .btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* Success state */
+.qr-payment-display.success .qr-status {
+    background: #d4edda;
+    border-color: #28a745;
+}
+
+.qr-payment-display.success .qr-status .status-text {
+    color: #155724;
+}
+
+.qr-payment-display.success .qr-status .spinner {
+    border-top-color: #28a745;
+}
+
+/* Error state */
+.qr-payment-display.error .qr-status {
+    background: #f8d7da;
+    border-color: #dc3545;
+}
+
+.qr-payment-display.error .qr-status .status-text {
+    color: #721c24;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .qr-payment-display {
+        padding: 20px;
+    }
+
+    .qr-code-image {
+        max-width: 250px;
+    }
+
+    .qr-header h3 {
+        font-size: 20px;
+    }
+
+    .qr-info .value {
+        font-size: 16px;
+    }
+}

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista formulario extendida para pos.payment.method -->
+    <record id="view_pos_payment_method_form_qr" model="ir.ui.view">
+        <field name="name">pos.payment.method.form.qr</field>
+        <field name="model">pos.payment.method</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_payment_method_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='payment_method']" position="after">
+                <group string="Configuración de Pago QR" attrs="{'invisible': [('use_payment_qr', '=', False)]}">
+                    <field name="use_payment_qr"/>
+                    <field name="qr_provider" attrs="{'required': [('use_payment_qr', '=', True)]}"/>
+                    <field name="qr_environment" attrs="{'required': [('use_payment_qr', '=', True)]}"/>
+                    <field name="qr_api_key" attrs="{'required': [('use_payment_qr', '=', True)]}" password="True"/>
+                    <field name="qr_secret_key" attrs="{'required': [('use_payment_qr', '=', True)]}" password="True"/>
+                    <field name="qr_webhook_url" readonly="1"/>
+                    <field name="qr_timeout"/>
+                    <field name="qr_auto_print"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vista de árbol para transacciones QR -->
+    <record id="view_payment_qr_transaction_tree" model="ir.ui.view">
+        <field name="name">payment.qr.transaction.tree</field>
+        <field name="model">payment.qr.transaction</field>
+        <field name="arch" type="xml">
+            <tree string="Transacciones QR" decoration-success="state=='done'"
+                  decoration-danger="state=='error'" decoration-info="state=='pending'">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="pos_order_id"/>
+                <field name="payment_method_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state"/>
+                <field name="provider_reference"/>
+                <field name="webhook_received"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario para transacciones QR -->
+    <record id="view_payment_qr_transaction_form" model="ir.ui.view">
+        <field name="name">payment.qr.transaction.form</field>
+        <field name="model">payment.qr.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Transacción QR">
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="pos_order_id"/>
+                            <field name="pos_payment_id"/>
+                            <field name="payment_method_id"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="provider_reference"/>
+                            <field name="webhook_received"/>
+                            <field name="webhook_date"/>
+                        </group>
+                    </group>
+                    <group string="Datos Técnicos">
+                        <field name="qr_data"/>
+                        <field name="provider_response"/>
+                        <field name="error_message" attrs="{'invisible': [('error_message', '=', False)]}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para transacciones QR -->
+    <record id="action_payment_qr_transaction" model="ir.actions.act_window">
+        <field name="name">Transacciones QR</field>
+        <field name="res_model">payment.qr.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay transacciones QR registradas
+            </p>
+            <p>
+                Las transacciones QR aparecerán aquí cuando se realicen pagos
+                mediante código QR en el Punto de Venta.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú -->
+    <menuitem id="menu_payment_qr_transaction"
+              name="Transacciones QR"
+              parent="point_of_sale.menu_point_of_sale"
+              action="action_payment_qr_transaction"
+              sequence="10"/>
+</odoo>

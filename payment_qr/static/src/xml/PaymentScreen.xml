@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Extend Payment Screen to show QR Code -->
+    <t t-name="payment_qr.PaymentScreen" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('payment-screen')]" position="inside">
+            <div class="payment-qr-container">
+                <!-- QR Code will be injected here by JavaScript -->
+            </div>
+        </xpath>
+    </t>
+
+    <!-- QR Code Display Component -->
+    <t t-name="payment_qr.QRCodeDisplay">
+        <div class="qr-payment-display">
+            <div class="qr-header">
+                <h3>Escanea el código QR para pagar</h3>
+            </div>
+
+            <div class="qr-code-wrapper">
+                <img t-if="qrImage"
+                     t-att-src="'data:image/png;base64,' + qrImage"
+                     alt="QR Code"
+                     class="qr-code-image"/>
+            </div>
+
+            <div class="qr-info">
+                <div class="qr-amount">
+                    <span class="label">Monto a pagar:</span>
+                    <span class="value" t-esc="formatCurrency(amount)"/>
+                </div>
+
+                <div class="qr-reference">
+                    <span class="label">Referencia:</span>
+                    <span class="value" t-esc="reference"/>
+                </div>
+            </div>
+
+            <div class="qr-status">
+                <span class="spinner-border spinner-border-sm" role="status"/>
+                <span class="status-text">Esperando confirmación de pago...</span>
+            </div>
+
+            <div class="qr-actions">
+                <button class="btn btn-secondary" t-on-click="onCancel">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>
