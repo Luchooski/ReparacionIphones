@@ -2,7 +2,7 @@
 
 import json
 import logging
-from odoo import http
+from odoo import http, fields
 from odoo.http import request
 
 _logger = logging.getLogger(__name__)
@@ -113,7 +113,7 @@ class PaymentQRWebhook(http.Controller):
                 payment.qr_transaction_id = str(resource_id)
                 transaction.state = 'done'
                 transaction.webhook_received = True
-                transaction.webhook_date = request.env['ir.fields'].Datetime.now()
+                transaction.webhook_date = fields.Datetime.now()
 
                 _logger.info(f"Payment {payment.id} approved by MercadoPago")
 
