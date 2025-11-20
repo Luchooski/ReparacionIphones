@@ -33,7 +33,6 @@
         'payment',
     ],
     'data': [
-        'security/payment_qr_security.xml',
         'data/pos_payment_method_data.xml',
         'views/pos_payment_method_views.xml',
     ],
