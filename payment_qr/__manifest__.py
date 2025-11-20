@@ -34,7 +34,6 @@
     ],
     'data': [
         'data/pos_payment_method_data.xml',
-        'views/pos_payment_method_views.xml',
     ],
     'assets': {
         'point_of_sale.assets': [
