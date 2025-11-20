@@ -1,31 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vista formulario extendida para pos.payment.method -->
-    <record id="view_pos_payment_method_form_qr" model="ir.ui.view">
-        <field name="name">pos.payment.method.form.qr</field>
-        <field name="model">pos.payment.method</field>
-        <field name="inherit_id" ref="point_of_sale.view_pos_payment_method_form"/>
-        <field name="arch" type="xml">
-            <field name="name" position="after">
-                <field name="use_payment_qr"/>
-            </field>
-            <sheet position="inside">
-                <group string="Configuración de Pago QR" invisible="not use_payment_qr">
-                    <group>
-                        <field name="qr_provider"/>
-                        <field name="qr_environment"/>
-                        <field name="qr_api_key" password="True"/>
-                        <field name="qr_secret_key" password="True"/>
-                    </group>
-                    <group>
-                        <field name="qr_webhook_url" readonly="1"/>
-                        <field name="qr_timeout"/>
-                        <field name="qr_auto_print"/>
-                    </group>
-                </group>
-            </sheet>
-        </field>
-    </record>
 
     <!-- Vista de árbol para transacciones QR -->
     <record id="view_payment_qr_transaction_tree" model="ir.ui.view">
@@ -105,4 +79,37 @@
               parent="point_of_sale.menu_point_of_sale"
               action="action_payment_qr_transaction"
               sequence="10"/>
+
+    <!-- Vista formulario para pos.payment.method - Sin herencia para evitar problemas con ZIP -->
+    <record id="view_pos_payment_method_form_qr" model="ir.ui.view">
+        <field name="name">pos.payment.method.form.qr</field>
+        <field name="model">pos.payment.method</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form string="Método de Pago QR">
+                <sheet>
+                    <group>
+                        <group string="Información General">
+                            <field name="name"/>
+                            <field name="use_payment_qr"/>
+                        </group>
+                    </group>
+                    <group string="Configuración de Pago QR" invisible="not use_payment_qr">
+                        <group>
+                            <field name="qr_provider"/>
+                            <field name="qr_environment"/>
+                            <field name="qr_api_key" password="True"/>
+                            <field name="qr_secret_key" password="True"/>
+                        </group>
+                        <group>
+                            <field name="qr_webhook_url" readonly="1"/>
+                            <field name="qr_timeout"/>
+                            <field name="qr_auto_print"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
 </odoo>
