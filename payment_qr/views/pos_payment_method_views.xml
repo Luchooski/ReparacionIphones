@@ -7,12 +7,12 @@
         <field name="inherit_id" ref="point_of_sale.view_pos_payment_method_form"/>
         <field name="arch" type="xml">
             <xpath expr="//group[@name='payment_method']" position="after">
-                <group string="Configuración de Pago QR" attrs="{'invisible': [('use_payment_qr', '=', False)]}">
+                <group string="Configuración de Pago QR" invisible="not use_payment_qr">
                     <field name="use_payment_qr"/>
-                    <field name="qr_provider" attrs="{'required': [('use_payment_qr', '=', True)]}"/>
-                    <field name="qr_environment" attrs="{'required': [('use_payment_qr', '=', True)]}"/>
-                    <field name="qr_api_key" attrs="{'required': [('use_payment_qr', '=', True)]}" password="True"/>
-                    <field name="qr_secret_key" attrs="{'required': [('use_payment_qr', '=', True)]}" password="True"/>
+                    <field name="qr_provider" required="use_payment_qr"/>
+                    <field name="qr_environment" required="use_payment_qr"/>
+                    <field name="qr_api_key" required="use_payment_qr" password="True"/>
+                    <field name="qr_secret_key" password="True"/>
                     <field name="qr_webhook_url" readonly="1"/>
                     <field name="qr_timeout"/>
                     <field name="qr_auto_print"/>
@@ -70,7 +70,7 @@
                     <group string="Datos Técnicos">
                         <field name="qr_data"/>
                         <field name="provider_response"/>
-                        <field name="error_message" attrs="{'invisible': [('error_message', '=', False)]}"/>
+                        <field name="error_message" invisible="not error_message"/>
                     </group>
                 </sheet>
             </form>
