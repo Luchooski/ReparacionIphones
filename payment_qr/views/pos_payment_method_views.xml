@@ -6,18 +6,24 @@
         <field name="model">pos.payment.method</field>
         <field name="inherit_id" ref="point_of_sale.view_pos_payment_method_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='payment_method']" position="after">
+            <field name="name" position="after">
+                <field name="use_payment_qr"/>
+            </field>
+            <sheet position="inside">
                 <group string="Configuración de Pago QR" invisible="not use_payment_qr">
-                    <field name="use_payment_qr"/>
-                    <field name="qr_provider" required="use_payment_qr"/>
-                    <field name="qr_environment" required="use_payment_qr"/>
-                    <field name="qr_api_key" required="use_payment_qr" password="True"/>
-                    <field name="qr_secret_key" password="True"/>
-                    <field name="qr_webhook_url" readonly="1"/>
-                    <field name="qr_timeout"/>
-                    <field name="qr_auto_print"/>
+                    <group>
+                        <field name="qr_provider"/>
+                        <field name="qr_environment"/>
+                        <field name="qr_api_key" password="True"/>
+                        <field name="qr_secret_key" password="True"/>
+                    </group>
+                    <group>
+                        <field name="qr_webhook_url" readonly="1"/>
+                        <field name="qr_timeout"/>
+                        <field name="qr_auto_print"/>
+                    </group>
                 </group>
-            </xpath>
+            </sheet>
         </field>
     </record>
 
@@ -33,7 +39,7 @@
                 <field name="pos_order_id"/>
                 <field name="payment_method_id"/>
                 <field name="amount" sum="Total"/>
-                <field name="currency_id" invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
                 <field name="state"/>
                 <field name="provider_reference"/>
                 <field name="webhook_received"/>
